@@ -1,0 +1,588 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-8 text-center">
+        <h1 class="display-4 mb-4">
+            <i class="fas fa-search-dollar text-primary me-3"></i>
+            Compare Prices Globally
+        </h1>
+        <p class="lead mb-5">Find the best deals on products from eBay, AliExpress, Jumia, and other e-commerce sites. <span class="text-info"><i class="fas fa-info-circle"></i> We've expanded our search to include more global marketplaces!</span></p>
+        
+        <!-- Search Options Tabs -->
+        <ul class="nav nav-pills nav-justified mb-4" id="searchTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="text-search-tab" data-bs-toggle="pill" data-bs-target="#text-search" type="button" role="tab">
+                    <i class="fas fa-keyboard me-2"></i>Text Search
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="image-search-tab" data-bs-toggle="pill" data-bs-target="#image-search" type="button" role="tab">
+                    <i class="fas fa-camera me-2"></i>Image Search
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="searchTabContent">
+            <!-- Text Search Tab -->
+            <div class="tab-pane fade show active" id="text-search" role="tabpanel">
+                <div class="card bg-dark shadow-lg">
+                    <div class="card-body p-4">
+                        <form action="{{ url_for('search') }}" method="get" class="search-form" id="textSearchForm">
+                            <div class="input-group input-group-lg mb-3">
+                                <input type="text" class="form-control" name="query" placeholder="Search for products..." aria-label="Search term" required>
+                                <button class="btn btn-primary" type="submit" id="textSearchBtn">
+                                    <span class="search-btn-text">
+                                        <i class="fas fa-search me-2"></i> Compare Prices
+                                    </span>
+                                    <span class="search-btn-loading d-none">
+                                        <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                        Searching...
+                                    </span>
+                                </button>
+                            </div>
+                    
+
+                    
+                            <p class="text-muted small">Enter product name, model number, or keywords</p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Image Search Tab -->
+            <div class="tab-pane fade" id="image-search" role="tabpanel">
+                <div class="card bg-dark shadow-lg">
+                    <div class="card-body p-4">
+                        <div id="imageSearchContainer">
+                            <div class="mb-4">
+                                <div class="upload-area" id="uploadArea">
+                                    <div class="upload-content">
+                                        <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                                        <h4>Upload Product Image</h4>
+                                        <p class="text-muted">Drag and drop an image or click to browse</p>
+                                        <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="handleImageSelect(this)">
+                                        <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('imageInput').click();">
+                                            <i class="fas fa-folder-open me-2"></i>Choose Image
+                                        </button>
+                                    </div>
+                                    <div class="upload-preview d-none" id="uploadPreview">
+                                        <img id="previewImage" class="preview-img" alt="Preview">
+                                        <div class="preview-overlay">
+                                            <button type="button" class="btn btn-sm btn-danger" onclick="clearImagePreview()">
+                                                <i class="fas fa-times"></i> Remove
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="text-center mb-4">
+                                <button type="button" class="btn btn-primary btn-lg" id="analyzeBtn" disabled onclick="analyzeImage()">
+                                    <span class="analyze-btn-text">
+                                        <i class="fas fa-eye me-2"></i> Analyze Image
+                                    </span>
+                                    <span class="analyze-btn-loading d-none">
+                                        <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                        Analyzing...
+                                    </span>
+                                </button>
+                            </div>
+
+                            <!-- Analysis Results -->
+                            <div class="card bg-secondary d-none" id="analysisResults">
+                                <div class="card-body">
+                                    <h6 class="card-title"><i class="fas fa-robot me-2"></i>AI Analysis Results</h6>
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <p class="mb-1"><strong>Product:</strong> <span id="detectedProduct">-</span></p>
+                                            <p class="mb-1"><strong>Brand:</strong> <span id="detectedBrand">-</span></p>
+                                            <p class="mb-1"><strong>Category:</strong> <span id="detectedCategory">-</span></p>
+                                            <p class="mb-1"><strong>Features:</strong> <span id="detectedFeatures">-</span></p>
+                                        </div>
+                                        <div class="col-md-4 text-end">
+                                            <div class="progress mb-2" style="height: 8px;">
+                                                <div class="progress-bar" id="confidenceBar" style="width: 0%"></div>
+                                            </div>
+                                            <small class="text-muted">Confidence: <span id="confidenceText">0%</span></small>
+                                        </div>
+                                    </div>
+                                    <div class="text-center mt-3">
+                                        <button type="button" class="btn btn-success" id="searchBtn" onclick="searchFromAnalysisWithLoader()">
+                                            <i class="fas fa-search me-2"></i> Search for Similar Products
+                                        </button>
+                                        <button type="button" class="btn btn-outline-secondary ms-2" onclick="resetImageAnalysis()">
+                                            <i class="fas fa-redo me-2"></i> Try Another Image
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Upload a clear image of the product you want to find. Our AI will identify the item first, then you can search for similar products.
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Progress Modal -->
+<div class="modal fade" id="loadingModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark">
+            <div class="modal-body text-center p-4">
+                <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
+                <h5 id="modalLoadingText">Processing your search...</h5>
+                <div class="progress mt-3" style="height: 10px;">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" id="progressBar" style="width: 0%"></div>
+                </div>
+                <p class="text-muted small mt-2" id="modalStatusText">Initializing search...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5 pt-5">
+    <div class="col-12 text-center mb-4">
+        <h2>Retailer Status</h2>
+        <p class="text-muted">We're actively working to add more retailers</p>
+    </div>
+    
+    <div class="col-md-12">
+        <div class="d-flex flex-wrap justify-content-center align-items-center gap-4">
+            <div class="retailer-logo">
+                <i class="fab fa-ebay fa-3x text-warning"></i>
+                <p class="mt-2">eBay <span class="badge bg-success">Active</span></p>
+            </div>
+            <div class="retailer-logo">
+                <i class="fas fa-globe-asia fa-3x text-warning"></i>
+                <p class="mt-2">AliExpress <span class="badge bg-success">Active</span></p>
+            </div>
+            <div class="retailer-logo">
+                <i class="fas fa-shopping-bag fa-3x text-warning"></i>
+                <p class="mt-2">Jumia Ghana <span class="badge bg-warning">Limited</span></p>
+            </div>
+            <div class="retailer-logo">
+                <i class="fas fa-store fa-3x text-success"></i>
+                <p class="mt-2">Jiji Ghana <span class="badge bg-success">Active</span></p>
+            </div>
+            <div class="retailer-logo">
+                <i class="fas fa-store-alt fa-3x text-success"></i>
+                <p class="mt-2">Tonaton <span class="badge bg-success">Active</span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-12 text-center mb-4">
+        <h2>How It Works</h2>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 bg-dark">
+            <div class="card-body text-center">
+                <div class="feature-icon mb-3">
+                    <i class="fas fa-search fa-3x text-primary"></i>
+                </div>
+                <h3>Search</h3>
+                <p>Enter the product you're looking for in our search bar.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 bg-dark">
+            <div class="card-body text-center">
+                <div class="feature-icon mb-3">
+                    <i class="fas fa-bolt fa-3x text-warning"></i>
+                </div>
+                <h3>Compare</h3>
+                <p>We search global marketplaces and find the best deals for you worldwide.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 bg-dark">
+            <div class="card-body text-center">
+                <div class="feature-icon mb-3">
+                    <i class="fas fa-piggy-bank fa-3x text-success"></i>
+                </div>
+                <h3>Save</h3>
+                <p>Find the best deal and save money on your purchase.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="card bg-primary text-white">
+            <div class="card-body p-4 text-center">
+                <h3>Ready to find the best deals?</h3>
+                <p class="lead">Start searching now and save money on your next purchase.</p>
+                <a href="#" class="btn btn-light btn-lg" onclick="document.querySelector('.search-form input').focus(); return false;">
+                    <i class="fas fa-search me-2"></i> Start Comparing
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+
+<style>
+.upload-area {
+    border: 2px dashed #6c757d;
+    border-radius: 10px;
+    padding: 40px;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    min-height: 200px;
+    position: relative;
+}
+
+.upload-area:hover, .upload-area.dragover {
+    border-color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.1);
+}
+
+.upload-preview {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.preview-img {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.preview-overlay {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.nav-pills .nav-link {
+    background-color: transparent;
+    border: 1px solid #6c757d;
+    color: #fff;
+    margin: 0 5px;
+}
+
+.nav-pills .nav-link.active {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+/* Progress bar colors for confidence levels */
+.bg-success { background-color: #28a745 !important; }
+.bg-warning { background-color: #ffc107 !important; }
+.bg-danger { background-color: #dc3545 !important; }
+</style>
+
+<script>
+    function toggleAdvancedFilters() {
+        const filters = document.getElementById('advancedFilters');
+        const icon = document.getElementById('filterToggleIcon');
+        
+        if (filters && icon) {
+            if (filters.classList.contains('collapsed')) {
+                filters.classList.remove('collapsed');
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-up');
+            } else {
+                filters.classList.add('collapsed');
+                icon.classList.remove('fa-chevron-up');
+                icon.classList.add('fa-chevron-down');
+            }
+        }
+    }
+
+    // Form submission with loading indicators
+    function initFormHandlers() {
+        const textSearchForm = document.getElementById('textSearchForm');
+        if (textSearchForm) {
+            textSearchForm.addEventListener('submit', function(e) {
+                const btn = document.getElementById('textSearchBtn');
+                const query = this.querySelector('input[name="query"]').value.trim();
+                
+                if (!query) return;
+                
+                showLoadingState(btn);
+                showLoadingModal('Searching for products...', 'Scraping e-commerce sites...');
+            });
+        }
+    }
+
+    function showLoadingState(button) {
+        if (!button) return;
+        
+        const textSpan = button.querySelector('.search-btn-text');
+        const loadingSpan = button.querySelector('.search-btn-loading');
+        
+        if (textSpan) textSpan.classList.add('d-none');
+        if (loadingSpan) loadingSpan.classList.remove('d-none');
+        button.disabled = true;
+    }
+
+    function showLoadingModal(title, status) {
+        const modal = document.getElementById('loadingModal');
+        if (!modal) return;
+        
+        const bsModal = new bootstrap.Modal(modal);
+        const titleEl = document.getElementById('modalLoadingText');
+        const statusEl = document.getElementById('modalStatusText');
+        
+        if (titleEl) titleEl.textContent = title;
+        if (statusEl) statusEl.textContent = status;
+        
+        bsModal.show();
+        
+        // Simulate progress updates
+        updateProgress(0);
+        
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += Math.random() * 20;
+            if (progress > 90) progress = 90;
+            updateProgress(progress);
+        }, 1000);
+        
+        window.loadingInterval = interval;
+    }
+
+    function updateProgress(percent) {
+        const progressBar = document.getElementById('progressBar');
+        const statusEl = document.getElementById('modalStatusText');
+        
+        if (progressBar) {
+            progressBar.style.width = percent + '%';
+        }
+        
+        if (statusEl) {
+            if (percent > 80) {
+                statusEl.textContent = 'Almost done...';
+            } else if (percent > 50) {
+                statusEl.textContent = 'Processing results...';
+            }
+        }
+    }
+
+    // Global variables for image analysis
+    let currentImageAnalysis = null;
+
+    // Handle image file selection
+    function handleImageSelect(input) {
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                alert('Please select an image file');
+                return;
+            }
+            
+            // Validate file size (20MB)
+            if (file.size > 20 * 1024 * 1024) {
+                alert('Image file too large. Please select an image under 20MB.');
+                return;
+            }
+            
+            // Show image preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('previewImage');
+                const uploadContent = document.querySelector('.upload-content');
+                const uploadPreview = document.getElementById('uploadPreview');
+                const analyzeBtn = document.getElementById('analyzeBtn');
+                
+                if (preview) preview.src = e.target.result;
+                if (uploadContent) uploadContent.style.display = 'none';
+                if (uploadPreview) uploadPreview.classList.remove('d-none');
+                if (analyzeBtn) analyzeBtn.disabled = false;
+                
+                // Hide previous analysis results
+                const results = document.getElementById('analysisResults');
+                if (results) results.classList.add('d-none');
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    // Analyze image function
+    async function analyzeImage() {
+        const imageInput = document.getElementById('imageInput');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        
+        if (!imageInput.files || imageInput.files.length === 0) {
+            alert('Please select an image first');
+            return;
+        }
+
+        // Show loading state
+        const analyzeText = analyzeBtn.querySelector('.analyze-btn-text');
+        const analyzeLoading = analyzeBtn.querySelector('.analyze-btn-loading');
+        
+        if (analyzeText) analyzeText.classList.add('d-none');
+        if (analyzeLoading) analyzeLoading.classList.remove('d-none');
+        analyzeBtn.disabled = true;
+
+        try {
+            const formData = new FormData();
+            formData.append('image', imageInput.files[0]);
+
+            const response = await fetch('/api/analyze-image', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                currentImageAnalysis = result;
+                displayAnalysisResults(result.analysis);
+            } else {
+                alert('Analysis failed: ' + (result.error || 'Unknown error'));
+            }
+        } catch (error) {
+            console.error('Error analyzing image:', error);
+            alert('Error analyzing image. Please try again.');
+        } finally {
+            // Reset button state
+            if (analyzeText) analyzeText.classList.remove('d-none');
+            if (analyzeLoading) analyzeLoading.classList.add('d-none');
+            analyzeBtn.disabled = false;
+        }
+    }
+
+    // Display analysis results
+    function displayAnalysisResults(analysis) {
+        const resultsCard = document.getElementById('analysisResults');
+        
+        const productEl = document.getElementById('detectedProduct');
+        const brandEl = document.getElementById('detectedBrand');
+        const categoryEl = document.getElementById('detectedCategory');
+        const featuresEl = document.getElementById('detectedFeatures');
+        
+        if (productEl) productEl.textContent = analysis.product_name || 'Unknown';
+        if (brandEl) brandEl.textContent = analysis.brand || 'Not detected';
+        if (categoryEl) categoryEl.textContent = analysis.category || 'Unknown';
+        if (featuresEl) featuresEl.textContent = (analysis.features || []).join(', ') || 'None detected';
+        
+        const confidence = Math.round((analysis.confidence || 0) * 100);
+        const confidenceText = document.getElementById('confidenceText');
+        const confidenceBar = document.getElementById('confidenceBar');
+        
+        if (confidenceText) confidenceText.textContent = confidence + '%';
+        if (confidenceBar) {
+            confidenceBar.style.width = confidence + '%';
+            confidenceBar.className = `progress-bar ${getConfidenceClass(confidence)}`;
+        }
+        
+        // Show results card
+        if (resultsCard) resultsCard.classList.remove('d-none');
+    }
+
+    function getConfidenceClass(confidence) {
+        if (confidence >= 80) return 'bg-success';
+        if (confidence >= 60) return 'bg-warning';
+        return 'bg-danger';
+    }
+
+    // Search from analysis
+    function searchFromAnalysis() {
+        if (!currentImageAnalysis) {
+            alert('No analysis data available');
+            return;
+        }
+
+        const analysis = currentImageAnalysis.analysis;
+        const searchQuery = currentImageAnalysis.search_query;
+        
+        // Build URL with analysis data
+        const params = new URLSearchParams({
+            query: searchQuery,
+            image_search: 'true',
+            detected_product: analysis.product_name || '',
+            detected_brand: analysis.brand || '',
+            detected_category: analysis.category || '',
+            detected_features: (analysis.features || []).join(','),
+            confidence: (analysis.confidence || 0).toString()
+        });
+        
+        // Navigate to search with analysis data
+        window.location.href = '/search?' + params.toString();
+    }
+
+    // Search with loading modal for image analysis results
+    function searchFromAnalysisWithLoader() {
+        // Show loading modal
+        showLoadingModal('Searching for products...', 'Scraping e-commerce sites...');
+        
+        // Call the search function
+        searchFromAnalysis();
+    }
+
+    // Reset image analysis
+    function resetImageAnalysis() {
+        currentImageAnalysis = null;
+        const uploadContent = document.querySelector('.upload-content');
+        const uploadPreview = document.getElementById('uploadPreview');
+        const imageInput = document.getElementById('imageInput');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const resultsCard = document.getElementById('analysisResults');
+
+        if (uploadContent) uploadContent.style.display = 'block';
+        if (uploadPreview) uploadPreview.classList.add('d-none');
+        if (imageInput) imageInput.value = '';
+        if (analyzeBtn) analyzeBtn.disabled = true;
+        if (resultsCard) resultsCard.classList.add('d-none');
+    }
+
+    function clearImagePreview() {
+        resetImageAnalysis();
+    }
+
+    // Initialize basic functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        // Price input validation
+        const priceInputs = document.querySelectorAll('input[type="number"]');
+        priceInputs.forEach(input => {
+            input.addEventListener('blur', function() {
+                if (this.value && parseFloat(this.value) < 0) {
+                    this.value = 0;
+                }
+            });
+        });
+        
+        // Retailer selection validation
+        const retailerCheckboxes = document.querySelectorAll('input[name="retailers"]');
+        retailerCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const checkedBoxes = document.querySelectorAll('input[name="retailers"]:checked');
+                if (checkedBoxes.length === 0) {
+                    this.checked = true;
+                    alert('At least one retailer must be selected');
+                }
+            });
+        });
+
+        // Initialize form handlers
+        initFormHandlers();
+    });
+</script>
+{% endblock %}

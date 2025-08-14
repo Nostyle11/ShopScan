@@ -1,0 +1,25 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 text-center py-5">
+        <div class="mb-4">
+            <i class="fas fa-exclamation-triangle fa-5x text-warning"></i>
+        </div>
+        <h1 class="display-4 mb-4">Oops! Something went wrong</h1>
+        
+        {% if error %}
+        <div class="alert alert-danger">
+            {{ error }}
+        </div>
+        {% endif %}
+        
+        <p class="lead">We encountered an error while processing your request.</p>
+        <div class="mt-5">
+            <a href="{{ url_for('index') }}" class="btn btn-lg btn-primary">
+                <i class="fas fa-home me-2"></i> Return to Home
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

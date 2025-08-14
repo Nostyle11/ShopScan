@@ -1,0 +1,23 @@
+/* Fixed Header Styles */
+
+/* Add padding to body to account for fixed header */
+body {
+    padding-top: 56px; /* Bootstrap default navbar height */
+}
+
+/* Adjust padding for larger screens */
+@media (min-width: 768px) {
+    body {
+        padding-top: 72px;
+    }
+}
+
+/* Ensure the header stays on top */
+.fixed-top {
+    z-index: 1030;
+}
+
+/* Ensure content doesn't hide behind fixed header */
+main.container {
+    padding-top: 20px !important;
+}

@@ -1,0 +1,143 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Product Details</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-body text-center">
+                {% if product.image_url %}
+                    <img src="{{ product.image_url }}" alt="{{ product.name }}" class="img-fluid product-detail-image mb-3">
+                {% else %}
+                    <div class="placeholder-image-large d-flex align-items-center justify-content-center bg-dark rounded mb-3">
+                        <i class="fas fa-image fa-5x text-secondary"></i>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <h1 class="mb-3">{{ product.name }}</h1>
+        
+        <div class="mb-4">
+            <p>{{ product.description or "No description available." }}</p>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Price Comparison</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Retailer</th>
+                                <th>Price</th>
+                                <th>Last Updated</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for entry in price_entries %}
+                            <tr class="{% if best_price and best_price.id == entry.id %}table-success{% endif %}">
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        {% if entry.source.logo == 'ebay' %}
+                                            <i class="fab fa-ebay text-warning me-2"></i>
+                                        {% elif entry.source.logo == 'aliexpress' %}
+                                            <i class="fas fa-globe-asia text-warning me-2"></i>
+                                        {% elif entry.source.logo == 'jumia' %}
+                                            <i class="fas fa-shopping-bag text-warning me-2"></i>
+                                        {% elif entry.source.logo == 'alibaba' %}
+                                            <i class="fas fa-globe-americas text-warning me-2"></i>
+                                        {% elif entry.source.logo == 'jiji' %}
+                                            <i class="fas fa-store text-primary me-2"></i>
+                                        {% elif entry.source.logo == 'tonaton' %}
+                                            <i class="fas fa-store-alt text-success me-2"></i>
+                                        {% elif entry.source.logo == 'kikuu' %}
+                                            <i class="fas fa-store text-info me-2"></i>
+                                        {% else %}
+                                            <i class="fas fa-store me-2"></i>
+                                        {% endif %}
+                                        {{ entry.source.name }}
+                                        {% if best_price and best_price.id == entry.id %}
+                                            <span class="badge bg-success ms-2">Best Deal</span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td class="fw-bold">${{ "{:.2f}".format(entry.price) }}</td>
+                                <td>{{ entry.last_updated.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>
+                                    <a href="{{ entry.url }}" target="_blank" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-external-link-alt"></i> Visit
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            
+                            {% if not price_entries %}
+                            <tr>
+                                <td colspan="4" class="text-center py-4">
+                                    <p class="mb-0">No price information available</p>
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">Prices last checked: 
+                        {% if price_entries %}
+                            {{ price_entries[0].last_updated.strftime('%Y-%m-%d %H:%M') }}
+                        {% else %}
+                            Never
+                        {% endif %}
+                    </small>
+                    <a href="{{ url_for('refresh_product', product_id=product.id) }}" class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-sync-alt"></i> Refresh Prices
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="d-grid gap-2 d-md-flex">
+            <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i> Back to Search
+            </a>
+            {% if best_price %}
+            <a href="{{ best_price.url }}" target="_blank" class="btn btn-success">
+                <i class="fas fa-shopping-cart me-2"></i> Buy at Best Price
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-12">
+        <h3>About Price Comparison</h3>
+        <p>Our price comparison tool continuously scans major online retailers to find you the best deals. Prices may vary based on shipping, promotions, and product availability.</p>
+        <p>Last time we checked these prices: 
+            {% if price_entries %}
+                {{ price_entries[0].last_updated.strftime('%Y-%m-%d %H:%M') }}
+            {% else %}
+                Never
+            {% endif %}
+        </p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="headphonesGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2c3e50;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#34495e;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="cushionGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e74c3c;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#c0392b;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="300" fill="#ecf0f1"/>
+  
+  <!-- Headband -->
+  <path d="M 100 100 Q 200 50 300 100" stroke="url(#headphonesGradient)" stroke-width="15" fill="none"/>
+  <path d="M 100 100 Q 200 60 300 100" stroke="#1a252f" stroke-width="8" fill="none"/>
+  
+  <!-- Left ear cup -->
+  <circle cx="100" cy="120" r="40" fill="url(#headphonesGradient)" stroke="#1a252f" stroke-width="2"/>
+  <circle cx="100" cy="120" r="30" fill="url(#cushionGradient)"/>
+  <circle cx="100" cy="120" r="20" fill="#2c3e50"/>
+  <circle cx="100" cy="120" r="12" fill="#34495e"/>
+  
+  <!-- Right ear cup -->
+  <circle cx="300" cy="120" r="40" fill="url(#headphonesGradient)" stroke="#1a252f" stroke-width="2"/>
+  <circle cx="300" cy="120" r="30" fill="url(#cushionGradient)"/>
+  <circle cx="300" cy="120" r="20" fill="#2c3e50"/>
+  <circle cx="300" cy="120" r="12" fill="#34495e"/>
+  
+  <!-- Adjustment sliders -->
+  <rect x="95" y="85" width="10" height="15" fill="#95a5a6" rx="2"/>
+  <rect x="295" y="85" width="10" height="15" fill="#95a5a6" rx="2"/>
+  
+  <!-- Brand logo placeholder -->
+  <rect x="180" y="70" width="40" height="15" fill="#e74c3c" rx="3"/>
+  <text x="200" y="82" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="10" font-weight="bold">BEATS</text>
+  
+  <!-- Model text -->
+  <text x="200" y="200" text-anchor="middle" fill="#2c3e50" font-family="Arial, sans-serif" font-size="14" font-weight="bold">Wireless Headphones</text>
+  <text x="200" y="220" text-anchor="middle" fill="#7f8c8d" font-family="Arial, sans-serif" font-size="12">Premium Audio Quality</text>
+  
+  <!-- Wireless indicator -->
+  <circle cx="350" cy="50" r="8" fill="#27ae60"/>
+  <path d="M 345 45 Q 350 40 355 45" stroke="white" stroke-width="2" fill="none"/>
+  <path d="M 347 47 Q 350 44 353 47" stroke="white" stroke-width="1.5" fill="none"/>
+</svg>

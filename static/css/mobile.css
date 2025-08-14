@@ -1,0 +1,251 @@
+/* Mobile-first responsive design */
+
+/* Mobile optimization */
+@media (max-width: 767px) {
+    .container {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    
+    .display-4 {
+        font-size: 2rem;
+    }
+    
+    .lead {
+        font-size: 1rem;
+    }
+    
+    /* Product cards on mobile */
+    .product-card {
+        margin-bottom: 1rem;
+    }
+    
+    .product-card .card-body {
+        padding: 0.75rem;
+        min-height: 120px;
+    }
+    
+    .product-card .card-title {
+        font-size: 0.85rem;
+        height: 2.1em;
+        -webkit-line-clamp: 2;
+    }
+    
+    .product-card .price {
+        font-size: 1.1rem;
+    }
+    
+    /* Search form mobile */
+    .search-form .input-group-lg .form-control {
+        font-size: 1rem;
+    }
+    
+    .search-form .btn {
+        font-size: 0.9rem;
+    }
+    
+    /* Retailer checkboxes mobile */
+    .retailer-checkboxes .col-6 {
+        margin-bottom: 0.5rem;
+    }
+    
+    .retailer-checkboxes .form-check-label {
+        font-size: 0.85rem;
+    }
+    
+    /* Image upload area mobile */
+    .image-upload-area {
+        min-height: 180px;
+        padding: 1rem;
+    }
+    
+    .image-upload-area i {
+        font-size: 2rem;
+    }
+    
+    /* Navigation mobile */
+    .navbar-brand {
+        font-size: 1.1rem;
+    }
+    
+    /* Footer mobile */
+    footer .col-md-3,
+    footer .col-md-6 {
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+    
+    footer h5 {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    footer p,
+    footer li {
+        font-size: 0.85rem;
+    }
+    
+    /* Retailer logos mobile */
+    .retailer-logo {
+        margin-bottom: 1rem;
+    }
+    
+    .retailer-logo i {
+        font-size: 2rem !important;
+    }
+    
+    .retailer-logo p {
+        font-size: 0.8rem;
+    }
+    
+    /* How it works cards mobile */
+    .feature-icon i {
+        font-size: 2rem !important;
+    }
+    
+    /* Breadcrumb mobile */
+    .breadcrumb {
+        font-size: 0.85rem;
+        padding: 0.5rem 0.75rem;
+    }
+    
+    /* Search results header mobile */
+    .d-flex.justify-content-between.align-items-center {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .btn-group {
+        margin-top: 0.5rem;
+        width: 100%;
+    }
+    
+    .btn-group .btn {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+    }
+}
+
+/* Tablet optimization */
+@media (min-width: 768px) and (max-width: 991px) {
+    .col-md-4 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+    
+    .product-card .position-relative {
+        height: 250px;
+    }
+    
+    .product-card .card-body {
+        min-height: 140px;
+    }
+}
+
+/* Desktop - 5 columns */
+@media (min-width: 992px) {
+    .col-lg-2 {
+        flex: 0 0 20%;
+        max-width: 20%;
+    }
+    
+    .product-card .position-relative {
+        height: 280px;
+    }
+    
+    .product-card .card-title {
+        font-size: 0.8rem;
+        height: 2.4em;
+        -webkit-line-clamp: 2;
+    }
+    
+    .product-card .price {
+        font-size: 1rem;
+    }
+}
+
+/* Extra large screens - better spacing */
+@media (min-width: 1200px) {
+    .product-card .position-relative {
+        height: 300px;
+    }
+    
+    .product-card .card-title {
+        font-size: 0.85rem;
+    }
+}
+
+/* Small mobile devices */
+@media (max-width: 575px) {
+    .display-4 {
+        font-size: 1.75rem;
+    }
+    
+    .retailer-logo i {
+        font-size: 1.5rem !important;
+    }
+    
+    /* Adjust grid for smaller screens */
+    .col-6.col-md-4.col-lg-2 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+    
+    .product-card .position-relative {
+        height: 220px;
+    }
+    
+    .product-card .card-title {
+        font-size: 0.8rem;
+        height: 2.1em;
+    }
+}
+
+/* Very small mobile devices */
+@media (max-width: 375px) {
+    .col-6.col-md-4.col-lg-2 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    
+    .product-card .position-relative {
+        height: 200px;
+    }
+}
+
+/* Touch-friendly buttons */
+.btn {
+    min-height: 44px;
+    min-width: 44px;
+}
+
+/* Improved tap targets */
+.form-check-input {
+    width: 1.2em;
+    height: 1.2em;
+}
+
+.form-check-label {
+    padding-left: 0.5rem;
+}
+
+/* Better spacing for mobile */
+.mb-3 {
+    margin-bottom: 1rem !important;
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem !important;
+}
+
+/* PWA-specific styles */
+@media all and (display-mode: standalone) {
+    body {
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+    
+    .navbar {
+        padding-top: calc(0.5rem + env(safe-area-inset-top));
+    }
+}
